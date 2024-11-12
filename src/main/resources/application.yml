@@ -1,0 +1,33 @@
+server.port: 8080
+
+spring:
+  application.name: app-product-v1
+  h2.console:
+    enabled: true
+    path: /h2-console
+    #http://localhost:8080/h2-console
+
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb?options=DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa.hibernate.ddl-auto: create
+  sql.init.mode: always
+
+logging:
+  level:
+    root: info
+    org:
+      hibernate: info
+      springframework:
+        transaction: debug
+        r2dbc: debug
+        security: info
+        web: info
+        cloud:
+          config: warn
+    com.sxp: debug
+    de.codecentric.boot.admin.client: warn
+    reactor.netty: info
+    reactor.netty.channel.FluxReceive: info

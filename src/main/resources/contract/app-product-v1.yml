@@ -1,0 +1,243 @@
+openapi: 3.0.1
+info:
+  title: Products
+  version: '1.0'
+
+servers:
+  - url: /v1/sxp
+
+tags:
+  - name: Product
+    description: Product description
+
+paths:
+  '/product':
+    get:
+      tags:
+        - Product
+      summary: Retrieve Products.
+      description: Retrieve Products.
+      operationId: retrieveProducts
+      parameters:
+        - $ref: '#/components/parameters/ApplicationDate'
+        - $ref: '#/components/parameters/ProductId'
+        - $ref: '#/components/parameters/BrandId'
+
+      responses:
+        '200':
+          $ref: '#/components/responses/RetrieveProduct'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '504':
+          $ref: '#/components/responses/GatewayTimeout'
+
+components:
+  schemas:
+    BrandId:
+      type: integer
+      description: group chain identifier
+      example: 1
+    ProductId:
+      type: integer
+      description: Product code identifier.
+      example: 35455
+    StartDate:
+      type: string
+      description: Start date from which the indicated rate is applied.
+      example: '2020-06-14-00.00.00'
+    EndDate:
+      type: string
+      description: End date from which the indicated rate is applied.
+      example: '2020-12-31-23.59.59'
+    PriceList:
+      type: integer
+      description: Applicable price list identifier.
+      example: 1
+    Price:
+      type: number
+      description: Final sale price.
+      example: 35.50
+    Curr:
+      type: string
+      description: Currency iso.
+      example: 'EUR'
+    Product:
+      description: Product was successfully retrieved.
+      type: object
+      properties:
+        productId:
+          $ref: '#/components/schemas/ProductId'
+        brandId:
+          $ref: '#/components/schemas/BrandId'
+        priceList:
+          $ref: '#/components/schemas/PriceList'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        price:
+          $ref: '#/components/schemas/Price'
+        curr:
+          $ref: '#/components/schemas/Curr'
+
+    Errors:
+      description: Information about the detail of errors.
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          description: List of error.
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      description: Information about the details of an error.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: Error code.
+          type: string
+          example: badRequest
+        message:
+          description: Error message.
+          type: string
+          example: Bad Request
+        level:
+          description: Level of the reported issue.
+          type: string
+          enum:
+            - ERROR
+            - FATAL
+            - INFO
+            - WARNING
+          example: ERROR
+        description:
+          description: Description of the reported issue.
+          type: string
+          example: Bad Request
+
+  parameters:
+    ApplicationDate:
+      name: application_date
+      in: query
+      schema:
+        type: string
+      required: true
+      description: Start date from which the indicated rate is applied.
+      example: '2020-06-14-00.00.00'
+    ProductId:
+      name: product_id
+      in: query
+      schema:
+        $ref: '#/components/schemas/ProductId'
+    BrandId:
+      name: brand_id
+      in: query
+      schema:
+        $ref: '#/components/schemas/BrandId'
+
+  responses:
+    RetrieveProduct:
+      description: Product was successfully retrieved.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+    BadRequest:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: badRequest
+                message: Bad Request
+                level: ERROR
+                description: Bad Request.
+    Unauthorized:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: unauthorized
+                message: Unauthorized
+                level: ERROR
+                description: Unauthorized.
+    Forbidden:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: forbidden
+                message: Forbidden
+                level: ERROR
+                description: Forbidden.
+    NotFound:
+      description: The specified entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: notFound
+                message: Not Found
+                level: ERROR
+                description: Not Found.
+    InternalServerError:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: internalServerError
+                message: Internal Server Error
+                level: ERROR
+                description: Internal Server Error.
+    ServiceUnavailable:
+      description: Service Unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: serviceUnavailable
+                message: Service Unavailable
+                level: ERROR
+                description: Service Unavailable.
+    GatewayTimeout:
+      description: Gateway timeout.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          example:
+            errors:
+              - code: gatewayTimeout
+                message: Gateway timeout
+                level: ERROR
+                description: Gateway timeout.
